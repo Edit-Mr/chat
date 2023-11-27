@@ -14,17 +14,16 @@
     </head>
     <body>
         <main>
-            <main>
-                <header>
-                    <div class="header">
-                        <h1>毛哥EM聊天室</h1>
-                        <div>
-                            <span class="admin">管理員</span>
-                            <span id="status">連線中</span> |
-                            <span id="online">0</span> 人在線
-                        </div>
+            <header>
+                <div class="header">
+                    <h1>毛哥EM聊天室</h1>
+                    <div>
+                        <span class="admin">管理員</span>
+                        <span id="status">連線中</span> |
+                        <span id="online">0</span> 人在線
                     </div>
-                </header>
+                </div>
+            </header>
             <div id="content"></div>
             <form id="send-form">
                 <input type="text" name="name" id="name" placeholder="暱稱" />
@@ -55,6 +54,7 @@
                 socket.on("connect", function () {
                     status.innerText = "上線";
                     status.classList.add("connected");
+                    status.classList.remove("disconnected");
                 });
 
                 socket.on("disconnect", function () {

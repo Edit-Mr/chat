@@ -69,12 +69,13 @@
                 }
 
                 socket.on("connect", function () {
-                    status.innerText = "Connected.";
+                    status.innerText = "上線";
                     status.classList.add("connected");
+                    status.classList.remove("disconnected");
                 });
 
                 socket.on("disconnect", function () {
-                    status.innerText = "Disconnected.";
+                    status.innerText = "斷線";
                     status.classList.remove("connected");
                     status.classList.add("disconnected");
                 });
