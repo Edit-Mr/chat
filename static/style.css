@@ -22,8 +22,10 @@ main {
 }
 header {
     flex-shrink: 0;
-    background: #00000028;
+    background: rgba(52, 186, 186, 0.2);
     padding: 1rem;
+    display: flex;
+    align-items: center;
 }
 h1 {
     font-size: 2rem;
@@ -32,6 +34,7 @@ h1 {
 #content {
     flex-grow: 1;
     padding: 1rem;
+    overflow-y: auto;
 }
 form {
     display: flex;
@@ -40,7 +43,7 @@ form {
 form > input {
     display: block;
     height: 100%;
-    border-radius: none;
+    border-radius: 0%;
     border: none;
     padding: 0 1rem;
     outline: none;
@@ -55,14 +58,18 @@ form > input:hover {
     background-color: #00000030;
 }
 #msg {
-    flex-grow: 1;
-    padding: 1rem;
+    flex: 1 1;
     border-inline: 2px solid #00000020;
+    width: 2rem;
 }
 #name {
     flex-grow: 0;
     width: 5rem;
 }
+.admin {
+    margin-left:0.5rem;
+}
+
 #status {
     display: inline-flex;
     align-items: center;
@@ -85,15 +92,45 @@ form > input:hover {
     background-color: #0ad5c1;
 }
 #status.disconnected {
-    color: #d50a0a;
+    color: #f50c0c;
 }
 #status.disconnected::before {
-    background-color: #d50a0a;
+    background-color: #f50c0c;
 }
-header > div {
+.header div {
     display: flex;
     align-items: center;
 }
+.header{
+    flex-grow: 1;
+}
+.admin{
+    text-align: right;
+}
+.admin div:first-child{
+    margin-bottom: 0.25rem;
+}
+.admin input{
+    width: 5rem;
+    margin-inline: 0.25rem;
+}
+.admin button,.admin input{
+    background: #ffffffb7;
+    padding: 0.25rem;
+    border: none;
+    color: #000;
+    cursor: pointer;
+    outline: none;
+    border-radius: .25rem;
+}
 #online {
-    margin-left: .5rem;
+    margin-left: 0.5rem;
+}
+.msg {
+    margin-bottom: 0.5rem;
+}
+.name {
+    color: #0ad5c1;
+    font-weight: bold;
+    margin-right: 0.5rem;
 }
