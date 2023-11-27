@@ -13,12 +13,11 @@
         <link rel="stylesheet" href="/static/style.css" />
     </head>
     <body>
-        <main>
+        <main class="">
             <header>
                 <div class="header">
                     <h1>毛哥EM聊天室</h1>
                     <div>
-                        <span class="admin">管理員</span>
                         <span id="status">連線中</span> |
                         <span id="online">0</span> 人在線
                     </div>
@@ -36,8 +35,23 @@
                 <input type="submit" value="送出" />
             </form>
         </main>
-
+        <section id="open">
+            <h2>🔗你收到一個連結</h2>
+            <p id="linkText"></p>
+            <div>
+                <button
+                    onclick="document.querySelector('main').classList.remove('link')"
+                >
+                    忽略</button
+                ><button
+                    onclick="document.querySelector('main').classList.remove('link');window.location.href=linkToOpen;"
+                >
+                    開啟
+                </button>
+            </div>
+        </section>
         <script>
+            let linkToOpen;
             document.addEventListener("DOMContentLoaded", () => {
                 var max_record;
                 var status = document.getElementById("status");
@@ -78,7 +92,14 @@
                         })();
                     }
                 });
-
+                socket.on("openLink", function (msg) {
+                    linkToOpen = msg;
+                    document.querySelector("#linkText").innerText = msg.replace(
+                        "https://",
+                        ""
+                    );
+                    document.querySelector("main").classList.add("link");
+                });
                 socket.on("msg", addMsgToBox);
 
                 sendForm.addEventListener("submit", function (e) {

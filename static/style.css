@@ -17,6 +17,7 @@ main {
     height: 100svh;
     color: #f9f9f9;
     margin: 0 auto;
+    transition: opacity 0.5s ease-in-out;
     max-width: 600px;
     background: linear-gradient(-45deg, #154265 0, #3a1a6b 100%);
 }
@@ -68,7 +69,7 @@ form > input:hover {
     width: 5rem;
 }
 .admin {
-    margin-left:0.5rem;
+    margin-left: 0.5rem;
 }
 
 #status {
@@ -102,27 +103,28 @@ form > input:hover {
     display: flex;
     align-items: center;
 }
-.header{
+.header {
     flex-grow: 1;
 }
-.admin{
+.admin {
     text-align: right;
 }
-.admin div:first-child{
+.admin div:first-child {
     margin-bottom: 0.25rem;
 }
-.admin input{
+.admin input {
     width: 5rem;
     margin-inline: 0.25rem;
 }
-.admin button,.admin input{
+.admin button,
+.admin input {
     background: #ffffffb7;
     padding: 0.25rem;
     border: none;
     color: #000;
     cursor: pointer;
     outline: none;
-    border-radius: .25rem;
+    border-radius: 0.25rem;
 }
 #online {
     margin-left: 0.5rem;
@@ -134,4 +136,48 @@ form > input:hover {
     color: #0ad5c1;
     font-weight: bold;
     margin-right: 0.5rem;
+}
+.link {
+    opacity: 0.5;
+}
+.link ~ #open {
+    top: 50%;
+}
+#open {
+    position: fixed;
+    transition: top 0.5s ease-in-out;
+    z-index: 2;
+    left: 50%;
+    top: 150%;
+    transform: translate(-50%, -50%);
+    background: rgb(36, 108, 147);
+    padding: 2rem;
+    border-radius: 1rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    color: #f9f9f9;
+    text-align: center;
+}
+#open p {
+    margin-block: 0.25rem 1rem;
+}
+#open button {
+    font-weight: bold;
+    margin-left: 0.5rem;
+    background: #d3d3d3;
+    color: #000;
+    border: none;
+    outline: none;
+    font-size: 1.5rem;
+    padding: 0.25rem;
+    border-radius: 0.25rem;
+    cursor: pointer;
+}
+#open button:hover {
+    background: #c2c2c2;
+}
+#open button:active {
+    background: #b1b1b1;
 }

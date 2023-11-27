@@ -12,7 +12,7 @@ const adminPassword = "scaict";
 // 加入線上人數計數
 let onlineCount = 0;
 
-app.use('/static', express.static('static'))
+app.use("/static", express.static("static"));
 
 // Rest of your code...
 
@@ -73,6 +73,13 @@ io.on("connection", socket => {
             socket.disconnect(true);
         });
     });
+
+    socket.on("sendLink", msg => {
+        
+        console.log("openLink", msg.link);
+        // 廣播訊息到聊天室
+        io.emit("openLink", msg.link);
+    });
 });
 
 records.on("new_message", msg => {
@@ -80,4 +87,6 @@ records.on("new_message", msg => {
     io.emit("msg", msg);
 });
 
-server.listen(process.env.PORT || 3000, () => { console.log("Express server listening on port")});
+server.listen(process.env.PORT || 3000, () => {
+    console.log("Express server listening on port");
+});

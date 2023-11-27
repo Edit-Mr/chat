@@ -55,6 +55,9 @@
             </form>
         </main>
         <script>
+            // Get token from URL query parameter
+            const urlParams = new URLSearchParams(window.location.search);
+            const token = urlParams.get("token");
             document.addEventListener("DOMContentLoaded", () => {
                 var max_record;
                 var status = document.getElementById("status");
@@ -177,7 +180,7 @@
                 const room = document.getElementById("room").value;
                 socket.emit("setCode", { token, room });
             }
-            const sendLink = () => {
+            function sendLink() {
                 const link = document.getElementById("link").value;
                 socket.emit("sendLink", { token, link });
             };
