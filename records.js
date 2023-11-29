@@ -1,6 +1,6 @@
 /** @format */
 
-const { EventEmitter } = require("events");
+import { EventEmitter } from "events";
 
 let instance;
 let data = [];
@@ -34,7 +34,7 @@ class Records extends EventEmitter {
     }
 }
 
-module.exports = (function () {
+export default (function () {
     if (!instance) {
         instance = new Records();
     }

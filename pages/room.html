@@ -86,6 +86,7 @@
                 });
 
                 socket.on("chatRecord", function (msgs) {
+                    content.innerHTML = "";
                     for (var i = 0; i < msgs.length; i++) {
                         (function () {
                             addMsgToBox(msgs[i]);
@@ -127,6 +128,8 @@
                     if (ok) {
                         socket.emit("send", formData);
                         setCookie("name", nameInputBox.value);
+                        console.log("Aaa");
+                        document.getElementById("msg").value = "";
                     }
                 });
 

@@ -1,10 +1,17 @@
 /** @format */
 
-const express = require("express");
+import express from "express";
+import http from "http";
+import { Server } from "socket.io";
+import records from "./records.js";
+import { fileURLToPath } from "url";
+import { dirname } from "path";
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
 const app = express();
-const server = require("http").Server(app);
-const io = require("socket.io")(server);
-const records = require("./records.js");
+const server = http.createServer(app);
+const io = new Server(server);
 const port = process.env.PORT || 3000;
 let code = "1234";
 const adminPassword = "scaict";
@@ -75,7 +82,6 @@ io.on("connection", socket => {
     });
 
     socket.on("sendLink", msg => {
-        
         console.log("openLink", msg.link);
         // 廣播訊息到聊天室
         io.emit("openLink", msg.link);

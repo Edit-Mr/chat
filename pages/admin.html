@@ -126,6 +126,7 @@
                     if (ok) {
                         socket.emit("send", formData);
                         setCookie("name", nameInputBox.value);
+                        document.getElementById("msg").value = "";
                     }
                 });
 
@@ -179,6 +180,7 @@
             function updateCode() {
                 const room = document.getElementById("room").value;
                 socket.emit("setCode", { token, room });
+                location.reload();
             }
             function sendLink() {
                 const link = document.getElementById("link").value;
