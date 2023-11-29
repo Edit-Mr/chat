@@ -53,7 +53,6 @@
         <script>
             let linkToOpen;
             document.addEventListener("DOMContentLoaded", () => {
-                var max_record;
                 var status = document.getElementById("status");
                 var online = document.getElementById("online");
                 var sendForm = document.getElementById("send-form");
@@ -80,11 +79,6 @@
                 socket.on("online", function (amount) {
                     online.innerText = amount;
                 });
-
-                socket.on("maxRecord", function (amount) {
-                    max_record = amount;
-                });
-
                 socket.on("chatRecord", function (msgs) {
                     content.innerHTML = "";
                     for (var i = 0; i < msgs.length; i++) {
@@ -145,15 +139,6 @@
                     msgBox.appendChild(nameBox);
                     msgBox.appendChild(msg);
                     content.appendChild(msgBox);
-
-                    if (content.children.length > max_record) {
-                        rmMsgFromBox();
-                    }
-                }
-
-                function rmMsgFromBox() {
-                    var childs = content.children;
-                    childs[0].remove();
                 }
 
                 function setCookie(cname, cvalue, exdays) {

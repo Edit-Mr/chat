@@ -59,7 +59,6 @@
             const urlParams = new URLSearchParams(window.location.search);
             const token = urlParams.get("token");
             document.addEventListener("DOMContentLoaded", () => {
-                var max_record;
                 var status = document.getElementById("status");
                 var online = document.getElementById("online");
                 var sendForm = document.getElementById("send-form");
@@ -86,11 +85,7 @@
                 socket.on("online", function (amount) {
                     online.innerText = amount;
                 });
-
-                socket.on("maxRecord", function (amount) {
-                    max_record = amount;
-                });
-
+                
                 socket.on("chatRecord", function (msgs) {
                     for (var i = 0; i < msgs.length; i++) {
                         (function () {
@@ -142,10 +137,6 @@
                     msgBox.appendChild(nameBox);
                     msgBox.appendChild(msg);
                     content.appendChild(msgBox);
-
-                    if (content.children.length > max_record) {
-                        rmMsgFromBox();
-                    }
                 }
 
                 function rmMsgFromBox() {

@@ -13,9 +13,10 @@ const app = express();
 const server = http.createServer(app);
 const io = new Server(server);
 const port = process.env.PORT || 3000;
-let code = "1234";
-const adminPassword = "scaict";
+let code = process.env.ROOM_TOKEN || "1234";
+const adminPassword = process.env.ADMIN_TOKEN || "password";
 let onlineCount = 0;
+let blackList = [];
 
 app.use((req, res, next) => {
     if (
@@ -30,34 +31,81 @@ app.use((req, res, next) => {
 
 app.use("/static", express.static("static"));
 
-// Rest of your code...
+const MAX_WRONG_ATTEMPTS = 3;
+const BLOCK_DURATION = 60000; // 1 minute in milliseconds
+const wrongAttempts = new Map();
 
 app.get("/", (req, res) => {
     const token = req.query.token;
+    const ip = req.ip;
+
+    if (wrongAttempts.has(ip) && wrongAttempts.get(ip) >= MAX_WRONG_ATTEMPTS) {
+        res.send("嘗試次數過多。請一分鐘後再試。");
+        return;
+    }
+
     if (token == code) {
         res.sendFile(__dirname + "/pages/room.html");
+        wrongAttempts.delete(ip);
     } else {
         res.sendFile(__dirname + "/pages/index.html");
         console.log("登入失敗:" + token);
+
+        if (wrongAttempts.has(ip)) {
+            wrongAttempts.set(ip, wrongAttempts.get(ip) + 1);
+        } else {
+            wrongAttempts.set(ip, 1);
+        }
+
+        if (wrongAttempts.get(ip) >= MAX_WRONG_ATTEMPTS) {
+            setTimeout(() => {
+                wrongAttempts.delete(ip);
+            }, BLOCK_DURATION);
+        }
     }
 });
 
 app.get("/admin", (req, res) => {
     const token = req.query.token;
-    if (token == adminPassword) res.sendFile(__dirname + "/pages/admin.html");
-    else {
+    const ip = req.ip;
+
+    if (wrongAttempts.has(ip) && wrongAttempts.get(ip) >= MAX_WRONG_ATTEMPTS) {
+        res.send("嘗試次數過多。請一分鐘後再試。");
+        return;
+    }
+
+    if (token == adminPassword) {
+        res.sendFile(__dirname + "/pages/admin.html");
+        wrongAttempts.delete(ip);
+    } else {
         res.sendFile(__dirname + "/pages/index.html");
         console.log("登入失敗:" + token);
+
+        if (wrongAttempts.has(ip)) {
+            wrongAttempts.set(ip, wrongAttempts.get(ip) + 1);
+        } else {
+            wrongAttempts.set(ip, 1);
+        }
+
+        if (wrongAttempts.get(ip) >= MAX_WRONG_ATTEMPTS) {
+            setTimeout(() => {
+                wrongAttempts.delete(ip);
+            }, BLOCK_DURATION);
+        }
     }
 });
 
 io.on("connection", socket => {
+    const ip = socket.handshake.address;
+    if (blackList.includes(ip)) {
+        console.log(ip + "嘗試連線，但是被黑名單擋下了");
+        socket.disconnect(true);
+        return;
+    }
     // 有連線發生時增加人數
     onlineCount++;
     // 發送人數給網頁
     io.emit("online", onlineCount);
-    // 發送紀錄最大值
-    socket.emit("maxRecord", records.getMax());
     // 發送紀錄
     socket.emit("chatRecord", records.get());
 
@@ -66,6 +114,7 @@ io.on("connection", socket => {
     });
 
     socket.on("send", msg => {
+        msg.ip = ip;
         // 如果 msg 內容鍵值小於 2 等於是訊息傳送不完全
         // 因此我們直接 return ，終止函式執行。
         if (Object.keys(msg).length < 2) return;
