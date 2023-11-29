@@ -17,6 +17,7 @@ let code = process.env.ROOM_TOKEN || "1234";
 const adminPassword = process.env.ADMIN_TOKEN || "password";
 let onlineCount = 0;
 let blackList = [];
+let vote = {};
 
 app.use((req, res, next) => {
     if (
@@ -143,6 +144,13 @@ io.on("connection", socket => {
         console.log("openLink", msg.link);
         // 廣播訊息到聊天室
         io.emit("openLink", msg.link);
+    });
+
+    socket.on("hand", checked => {
+        vote[ip] = checked;
+        const voteCount = Object.values(vote).filter(v => v).length;
+        const total = Object.values(vote).length;
+        io.emit("hand", { voteCount, total });
     });
 });
 

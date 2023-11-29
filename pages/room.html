@@ -22,6 +22,15 @@
                         <span id="online">0</span> 人在線
                     </div>
                 </div>
+                <div class="admin">
+                    <input
+                        type="checkbox"
+                        name="hand"
+                        id="hand"
+                        onclick="socket.emit('hand', this.checked)"
+                    />
+                    <label for="hand" id="hand-label"></label>
+                </div>
             </header>
             <div id="content"></div>
             <form id="send-form">

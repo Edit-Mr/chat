@@ -20,6 +20,8 @@ main {
     transition: opacity 0.5s ease-in-out;
     max-width: 600px;
     background: linear-gradient(-45deg, #154265 0, #3a1a6b 100%);
+    overflow: hidden;
+    box-shadow: 0 0 1rem rgba(0, 0, 0, 0.5);
 }
 header {
     flex-shrink: 0;
@@ -28,6 +30,7 @@ header {
     display: flex;
     align-items: center;
     width: 100%;
+    box-shadow: 0 0 1rem rgba(0, 0, 0, 0.2);
 }
 h1 {
     font-size: 2rem;
@@ -188,4 +191,26 @@ form > input:hover {
 }
 #open button:active {
     background: #b1b1b1;
+}
+#hand{
+    display: none;
+}
+#hand-label{
+background:rgb(112, 140, 227);
+display: block;
+height: 3rem;
+width: 3rem;
+border-radius: 50%;
+display: flex;
+justify-content: center;
+align-items: center;
+cursor: pointer;
+transition: box-shadow 0.2s ease;
+}
+#hand-label::after{
+    content: "✋";
+    font-size: 1.5rem;
+}
+#hand:checked ~ #hand-label{
+    box-shadow: rgb(203, 255, 125) 0 0 .5rem;
 }
