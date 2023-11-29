@@ -15,9 +15,18 @@ const io = new Server(server);
 const port = process.env.PORT || 3000;
 let code = "1234";
 const adminPassword = "scaict";
-
-// 加入線上人數計數
 let onlineCount = 0;
+
+app.use((req, res, next) => {
+    if (
+        req.header("x-forwarded-proto") !== "https" &&
+        process.env.NODE_ENV === "production"
+    ) {
+        res.redirect(`https://${req.header("host")}${req.url}`);
+    } else {
+        next();
+    }
+});
 
 app.use("/static", express.static("static"));
 
