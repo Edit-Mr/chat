@@ -22,6 +22,8 @@ main {
     background: linear-gradient(-45deg, #154265 0, #3a1a6b 100%);
     overflow: hidden;
     box-shadow: 0 0 1rem rgba(0, 0, 0, 0.5);
+    position: relative;
+    z-index: 1;
 }
 header {
     flex-shrink: 0;
@@ -137,13 +139,16 @@ form > input:hover {
     width: 5rem;
     margin-inline: 0.25rem;
 }
+.admin button {
+    cursor: pointer;
+}
 .admin button,
 .admin input {
     background: #ffffffb7;
     padding: 0.25rem;
     border: none;
     color: #000;
-    cursor: pointer;
+
     outline: none;
     border-radius: 0.25rem;
 }
@@ -242,7 +247,7 @@ form > input:hover {
     display: flex;
     justify-content: center;
     align-items: center;
-    color: #fff;
+    color: #ffffff5a;
     font-size: 3rem;
     cursor: pointer;
 }
@@ -251,6 +256,7 @@ form > input:hover {
 }
 #welcome-toggle:hover {
     background: #ffffff17;
+    color: #fff;
 }
 
 body:has(#welcome:checked) {
@@ -269,15 +275,22 @@ body:has(#welcome:checked) #welcome-toggle::after {
 body:has(#welcome:checked) .welcome {
     display: flex;
 }
-h2{
+.welcome img{
+    width:calc((50vw - 300px) / 1.2);
+}
+h2 {
     font-size: calc((50vw - 300px) / 10);
+}
+h3 {
+    font-size: calc((50vw - 300px) / 15);
+    margin-block: 1rem 1.5rem;
 }
 .welcome {
     display: none;
     flex-grow: 1;
     height: 100svh;
     background: linear-gradient(-45deg, #154265 0, #3a1a6b 100%);
-    color:#FFF;
+    color: #fff;
     justify-content: center;
     align-items: center;
     flex-direction: column;

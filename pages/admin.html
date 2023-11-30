@@ -64,19 +64,21 @@
                 <input type="submit" value="送出" />
             </form>
         </main>
-        <input type="checkbox" id="welcome">
+        <input type="checkbox" id="welcome" />
         <label for="welcome" id="welcome-toggle"></label>
         <div class="welcome">
-<h2>掃描 QR Code 加入聊天室</h2>
-<h3 id="urlToJoin">或至</h3>
+            <h2>掃描 QR Code 加入聊天室</h2>
+            <h3 id="urlToJoin">或至</h3>
+            <div class="qr"></div>
         </div>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
         <script>
             let userToken;
             const urlParams = new URLSearchParams(window.location.search);
             const token = urlParams.get("token");
-            document.getElementById("urlToJoin").innerText = `或至 ${window.location.href.split("//")[1].split("/")[0]} 輸入代碼加入聊天室`;
-            
-            document.addEventListener("DOMContentLoaded", () => {
+            invite();
+
+            window.onload = function () {
                 var status = document.getElementById("status");
                 var online = document.getElementById("online");
                 var sendForm = document.getElementById("send-form");
@@ -91,6 +93,10 @@
                 }
                 socket.on("token", function (token) {
                     userToken = token;
+                });
+                socket.on("roomCode", function (token) {
+                    document.getElementById("room").value = token;
+                    invite();
                 });
                 socket.on("connect", function () {
                     status.innerText = "上線";
@@ -196,7 +202,7 @@
                     }
                     return "";
                 }
-            });
+            };
 
             function updateCode() {
                 const room = document.getElementById("room").value;
@@ -206,6 +212,24 @@
             function sendLink() {
                 const link = document.getElementById("link").value;
                 socket.emit("sendLink", { token, link });
+            }
+            function invite() {
+                document.getElementById("urlToJoin").innerText =
+                    `或至 ${
+                        window.location.href.split("//")[1].split("/")[0]
+                    } 輸入代碼` + document.getElementById("room").value;
+                document.querySelector(".qr").innerHTML = "";
+                var qrcode = new QRCode(document.querySelector(".qr"), {
+                    text:
+                        window.location.href.split("/admin")[0] +
+                        "?token=" +
+                        document.getElementById("room").value,
+                    width: 1000,
+                    height: 1000,
+                    colorDark: "#fff",
+                    colorLight: "transparent",
+                    correctLevel: QRCode.CorrectLevel.H,
+                });
             }
         </script>
     </body>

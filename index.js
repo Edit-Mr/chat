@@ -127,6 +127,8 @@ io.on("connection", socket => {
     socket.on("greet", () => {
         socket.emit("greet", onlineCount);
     });
+    // 發送 roomCode
+    socket.emit("roomCode", code);
 
     socket.on("send", msg => {
         msg.ip = ip;
