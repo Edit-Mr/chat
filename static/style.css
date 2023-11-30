@@ -31,6 +31,21 @@ header {
     align-items: center;
     width: 100%;
     box-shadow: 0 0 1rem rgba(0, 0, 0, 0.2);
+    position: relative;
+}
+.percent {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 0%;
+    height: 100%;
+    background-color: #25ff2857;
+    transition: width 0.5s ease-in-out;
+    z-index: 1;
+}
+header > div {
+    z-index: 2;
 }
 h1 {
     font-size: 2rem;
@@ -112,6 +127,9 @@ form > input:hover {
 .admin {
     text-align: right;
 }
+.admin-hand {
+    margin-left: 1rem;
+}
 .admin div:first-child {
     margin-bottom: 0.25rem;
 }
@@ -192,25 +210,75 @@ form > input:hover {
 #open button:active {
     background: #b1b1b1;
 }
-#hand{
+#hand,
+#welcome {
     display: none;
 }
-#hand-label{
-background:rgb(112, 140, 227);
-display: block;
-height: 3rem;
-width: 3rem;
-border-radius: 50%;
-display: flex;
-justify-content: center;
-align-items: center;
-cursor: pointer;
-transition: box-shadow 0.2s ease;
+#hand-label {
+    background: rgb(112, 140, 227);
+    display: block;
+    height: 3rem;
+    width: 3rem;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: box-shadow 0.2s ease;
 }
-#hand-label::after{
+#hand-label::after {
     content: "✋";
     font-size: 1.5rem;
 }
-#hand:checked ~ #hand-label{
-    box-shadow: rgb(203, 255, 125) 0 0 .5rem;
+#hand:checked ~ #hand-label {
+    box-shadow: rgb(0, 255, 16) 0 0 0.5rem;
+}
+#welcome-toggle {
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: calc(50vw - 300px);
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #fff;
+    font-size: 3rem;
+    cursor: pointer;
+}
+#welcome-toggle::after {
+    content: "+";
+}
+#welcome-toggle:hover {
+    background: #ffffff17;
+}
+
+body:has(#welcome:checked) {
+    display: flex;
+}
+
+body:has(#welcome:checked) #welcome-toggle {
+    width: unset;
+    height: unset;
+    padding: 2rem;
+}
+body:has(#welcome:checked) #welcome-toggle::after {
+    content: "×";
+}
+
+body:has(#welcome:checked) .welcome {
+    display: flex;
+}
+h2{
+    font-size: calc((50vw - 300px) / 10);
+}
+.welcome {
+    display: none;
+    flex-grow: 1;
+    height: 100svh;
+    background: linear-gradient(-45deg, #154265 0, #3a1a6b 100%);
+    color:#FFF;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
 }

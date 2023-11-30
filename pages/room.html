@@ -15,6 +15,7 @@
     <body>
         <main class="">
             <header>
+                <div class="percent"></div>
                 <div class="header">
                     <h1>毛哥EM聊天室</h1>
                     <div>
@@ -27,7 +28,7 @@
                         type="checkbox"
                         name="hand"
                         id="hand"
-                        onclick="socket.emit('hand', this.checked)"
+                        onclick="socket.emit('hand', {checked: this.checked, userToken})"
                     />
                     <label for="hand" id="hand-label"></label>
                 </div>
@@ -60,7 +61,7 @@
             </div>
         </section>
         <script>
-            let linkToOpen;
+            let linkToOpen, userToken;
             document.addEventListener("DOMContentLoaded", () => {
                 var status = document.getElementById("status");
                 var online = document.getElementById("online");
@@ -68,6 +69,8 @@
                 var content = document.getElementById("content");
                 var nameInputBox = document.getElementById("name");
                 var name = getCookie("name");
+                var onlineCount = 0;
+                document.getElementById("hand").checked = false;
 
                 if (name) {
                     nameInputBox.value = name;
@@ -86,6 +89,7 @@
                 });
 
                 socket.on("online", function (amount) {
+                    onlineCount = amount;
                     online.innerText = amount;
                 });
                 socket.on("chatRecord", function (msgs) {
@@ -104,7 +108,16 @@
                     );
                     document.querySelector("main").classList.add("link");
                 });
+                socket.on("voteCount", function (voteCount) {
+                    const votePercent = (voteCount / onlineCount) * 100;
+                    document.querySelector(
+                        ".percent"
+                    ).style.width = `${votePercent}%`;
+                });
                 socket.on("msg", addMsgToBox);
+                socket.on("token", function (token) {
+                    userToken = token;
+                });
 
                 sendForm.addEventListener("submit", function (e) {
                     e.preventDefault();

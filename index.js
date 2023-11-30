@@ -18,6 +18,7 @@ const adminPassword = process.env.ADMIN_TOKEN || "password";
 let onlineCount = 0;
 let blackList = [];
 let vote = {};
+const userTokenList = [];
 
 app.use((req, res, next) => {
     if (
@@ -107,8 +108,21 @@ io.on("connection", socket => {
     onlineCount++;
     // 發送人數給網頁
     io.emit("online", onlineCount);
+
+    let token = generateToken();
+    while (userTokenList.includes(token)) {
+        token = generateToken();
+    }
+
+    userTokenList.push(token);
+    socket.emit("token", token);
+
     // 發送紀錄
     socket.emit("chatRecord", records.get());
+
+    // 發送投票結果
+    const voteCount = Object.values(vote).filter(v => v).length;
+    io.emit("voteCount", voteCount);
 
     socket.on("greet", () => {
         socket.emit("greet", onlineCount);
@@ -126,6 +140,14 @@ io.on("connection", socket => {
         // 有人離線了，扣人
         onlineCount = onlineCount < 0 ? 0 : (onlineCount -= 1);
         io.emit("online", onlineCount);
+        // 移除 token
+        const index = userTokenList.findIndex(t => t == token);
+        userTokenList.splice(index, 1);
+        // 移除投票
+        delete vote[token];
+        // 發送投票結果
+        const voteCount = Object.values(vote).filter(v => v).length;
+        io.emit("voteCount", voteCount);
     });
 
     socket.on("setCode", ({ token, room }) => {
@@ -147,10 +169,9 @@ io.on("connection", socket => {
     });
 
     socket.on("hand", checked => {
-        vote[ip] = checked;
+        vote[checked.userToken] = checked.checked;
         const voteCount = Object.values(vote).filter(v => v).length;
-        const total = Object.values(vote).length;
-        io.emit("hand", { voteCount, total });
+        io.emit("voteCount", voteCount);
     });
 });
 
@@ -162,3 +183,14 @@ records.on("new_message", msg => {
 server.listen(process.env.PORT || 3000, () => {
     console.log("Express server listening on port");
 });
+
+function generateToken() {
+    const characters =
+        "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    let token = "";
+    for (let i = 0; i < 10; i++) {
+        const randomIndex = Math.floor(Math.random() * characters.length);
+        token += characters[randomIndex];
+    }
+    return token;
+}

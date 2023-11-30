@@ -15,6 +15,7 @@
     <body>
         <main>
             <header>
+                <div class="percent"></div>
                 <div class="header">
                     <h1>毛哥EM聊天室</h1>
                     <div>
@@ -41,6 +42,15 @@
                         </button>
                     </div>
                 </div>
+                <div class="admin-hand">
+                    <input
+                        type="checkbox"
+                        name="hand"
+                        id="hand"
+                        onclick="socket.emit('hand', {checked: this.checked, userToken})"
+                    />
+                    <label for="hand" id="hand-label"></label>
+                </div>
             </header>
             <div id="content"></div>
             <form id="send-form">
@@ -54,10 +64,18 @@
                 <input type="submit" value="送出" />
             </form>
         </main>
+        <input type="checkbox" id="welcome">
+        <label for="welcome" id="welcome-toggle"></label>
+        <div class="welcome">
+<h2>掃描 QR Code 加入聊天室</h2>
+<h3 id="urlToJoin">或至</h3>
+        </div>
         <script>
-            // Get token from URL query parameter
+            let userToken;
             const urlParams = new URLSearchParams(window.location.search);
             const token = urlParams.get("token");
+            document.getElementById("urlToJoin").innerText = `或至 ${window.location.href.split("//")[1].split("/")[0]} 輸入代碼加入聊天室`;
+            
             document.addEventListener("DOMContentLoaded", () => {
                 var status = document.getElementById("status");
                 var online = document.getElementById("online");
@@ -65,11 +83,15 @@
                 var content = document.getElementById("content");
                 var nameInputBox = document.getElementById("name");
                 var name = getCookie("name");
+                var onlineCount = 0;
+                document.getElementById("hand").checked = false;
 
                 if (name) {
                     nameInputBox.value = name;
                 }
-
+                socket.on("token", function (token) {
+                    userToken = token;
+                });
                 socket.on("connect", function () {
                     status.innerText = "上線";
                     status.classList.add("connected");
@@ -83,15 +105,23 @@
                 });
 
                 socket.on("online", function (amount) {
+                    onlineCount = amount;
                     online.innerText = amount;
                 });
-                
+
                 socket.on("chatRecord", function (msgs) {
                     for (var i = 0; i < msgs.length; i++) {
                         (function () {
                             addMsgToBox(msgs[i]);
                         })();
                     }
+                });
+
+                socket.on("voteCount", function (voteCount) {
+                    const votePercent = (voteCount / onlineCount) * 100;
+                    document.querySelector(
+                        ".percent"
+                    ).style.width = `${votePercent}%`;
                 });
 
                 socket.on("msg", addMsgToBox);
@@ -176,7 +206,7 @@
             function sendLink() {
                 const link = document.getElementById("link").value;
                 socket.emit("sendLink", { token, link });
-            };
+            }
         </script>
     </body>
 </html>
