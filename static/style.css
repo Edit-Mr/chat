@@ -77,7 +77,14 @@ form > input:focus {
     background-color: #00000040;
 }
 form > input:hover {
-    background-color: #00000030;
+    background-color: #ffffff0c;
+}
+
+input[type="submit"] {
+    cursor: pointer;
+}
+form > input[type="submit"]:hover {
+    background-color: #ffffff17;
 }
 #msg {
     flex: 1 1;
@@ -165,6 +172,7 @@ form > input:hover {
 }
 .msg {
     margin-bottom: 0.5rem;
+    overflow-wrap: break-word;
 }
 .name {
     color: #0ad5c1;

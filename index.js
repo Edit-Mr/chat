@@ -6,6 +6,8 @@ import { Server } from "socket.io";
 import records from "./records.js";
 import { fileURLToPath } from "url";
 import { dirname } from "path";
+import os from "os";
+import speakeasy from "speakeasy";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
@@ -15,6 +17,7 @@ const io = new Server(server);
 const port = process.env.PORT || 3000;
 let code = process.env.ROOM_TOKEN || "1234";
 const adminPassword = process.env.ADMIN_TOKEN || "password";
+const secret = process.env.TOTP_TOKEN || "MJHGQS2SEVKGOXSLKFIVWVRIIRFHSL3NMYXXIRRPEERVASKR";
 let onlineCount = 0;
 let blackList = [];
 let vote = {};
@@ -46,11 +49,16 @@ app.get("/", (req, res) => {
         return;
     }
 
+    if (!token) {
+        res.sendFile(__dirname + "/pages/index.html");
+        return;
+    }
+
     if (token == code) {
         res.sendFile(__dirname + "/pages/room.html");
         wrongAttempts.delete(ip);
     } else {
-        res.sendFile(__dirname + "/pages/index.html");
+        res.sendFile(__dirname + "/pages/wrong.html");
         console.log("登入失敗:" + token);
 
         if (wrongAttempts.has(ip)) {
@@ -69,14 +77,26 @@ app.get("/", (req, res) => {
 
 app.get("/admin", (req, res) => {
     const token = req.query.token;
+    const totpCode = req.query.totpCode;
     const ip = req.ip;
-
     if (wrongAttempts.has(ip) && wrongAttempts.get(ip) >= MAX_WRONG_ATTEMPTS) {
         res.send("嘗試次數過多。請一分鐘後再試。");
         return;
     }
-
     if (token == adminPassword) {
+        // 假設我們收到的一次性驗證碼為 '132890'
+        // 我們選用 base32編碼的金鑰
+        const verified = speakeasy.totp.verify({
+            secret: secret,
+            encoding: "base32",
+            token: totpCode,
+            window: 2 
+        });
+        if (!verified) {
+            res.sendFile(__dirname + "/pages/wrong.html");
+            console.log("TOTP 錯誤:" + token);
+            return;
+        }
         res.sendFile(__dirname + "/pages/admin.html");
         wrongAttempts.delete(ip);
     } else {
@@ -196,3 +216,12 @@ function generateToken() {
     }
     return token;
 }
+
+app.get("/ram-usage", (req, res) => {
+    const totalMemory = os.totalmem();
+    const freeMemory = os.freemem();
+    const usedMemory = totalMemory - freeMemory;
+    const ramUsage = (usedMemory / totalMemory) * 100;
+
+    res.json({ ramUsage });
+});
