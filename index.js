@@ -99,21 +99,21 @@ app.get("/admin", (req, res) => {
         }
         res.sendFile(__dirname + "/pages/admin.html");
         wrongAttempts.delete(ip);
+        return;
     } else {
         res.sendFile(__dirname + "/pages/index.html");
         console.log("登入失敗:" + token);
+    }
+    if (wrongAttempts.has(ip)) {
+        wrongAttempts.set(ip, wrongAttempts.get(ip) + 1);
+    } else {
+        wrongAttempts.set(ip, 1);
+    }
 
-        if (wrongAttempts.has(ip)) {
-            wrongAttempts.set(ip, wrongAttempts.get(ip) + 1);
-        } else {
-            wrongAttempts.set(ip, 1);
-        }
-
-        if (wrongAttempts.get(ip) >= MAX_WRONG_ATTEMPTS) {
-            setTimeout(() => {
-                wrongAttempts.delete(ip);
-            }, BLOCK_DURATION);
-        }
+    if (wrongAttempts.get(ip) >= MAX_WRONG_ATTEMPTS) {
+        setTimeout(() => {
+            wrongAttempts.delete(ip);
+        }, BLOCK_DURATION);
     }
 });
 
