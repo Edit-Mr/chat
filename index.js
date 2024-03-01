@@ -223,5 +223,5 @@ app.get("/ram-usage", (req, res) => {
     const usedMemory = totalMemory - freeMemory;
     const ramUsage = (usedMemory / totalMemory) * 100;
 
-    res.json({ ramUsage });
+    res.json({ totalMemory,usedMemory,ramUsage });
 });
